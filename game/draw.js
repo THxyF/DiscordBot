@@ -98,9 +98,28 @@ exports.cMain = function(command, message){
   message.reply('DMに'+array.length + '枚手札を送りました。')
   message.author.send(array);
   
+  if(chIndex === -1){
+    message.author.send('そのゲームは開始されてません。');
+  }
+  else {
+    let memIndex = json.channels[chIndex].members.findIndex(mem => mem.id === id);
+    
+    if(memIndex === -1){
+      message.author.send('どこのゲームにも参加してませんね？');
+    }
+    else{
+      for(let i = 0; i < command; i ++){
+        json.channels[chIndex].members[memIndex].hands.push(array[i]);
+      }
+      
+      fs.writeFileSync(datPath, JSON.stringify(json));
+      message.reply('データに書き込みました。');
+    }
+  }
+  
   return 0;
 }
 
 exports.description = function(){
-  return '\n     手札を<num>枚ランダムに生成します。';
+  return ' <num>\n     手札を<num>枚ランダムに生成します。';
 }

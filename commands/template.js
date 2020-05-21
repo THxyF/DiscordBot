@@ -1,4 +1,7 @@
 exports.cMain = function(command, message){
+  //ここに実際の処理
+  //commandが入力内容
+  
   return 0;
 }
 

@@ -20,7 +20,9 @@ exports.cMain = function(command, message){
             "x^2"
           ]
         }
-      ]
+      ],
+      turn:0,
+      whoseTurn:0
     });
     
     message.channel.send(channel + 'のデータが作成されました。\n' + message.author + 'が参加しました。');

@@ -5,7 +5,11 @@
   "main": "main.js",
   "dependencies": {
     "discord.js": "latest",
-    "node-cron": "^2.0.3"
+    "node-cron": "^2.0.3",
+    "date-utils": "^1.2.21",
+    "cron": "^1.8.2",
+    "node-fetch": "^2.6.0",
+    "form-data": "^3.0.0"
   },
   "devDependencies": {},
   "scripts": {

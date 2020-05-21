@@ -7,7 +7,7 @@ exports.cMain = function(command, message){
   
   for(let i = 0; i < len; i ++){   
     access = require('./' + file_list[i]);
-    foo += ('game:' + file_list[i].slice(0, -3) +'\n     ' + access.description() + '\n\n');
+    foo += ('THFgame:' + file_list[i].slice(0, -3) + access.description() + '\n\n');
   }
   
   message.channel.send(foo);

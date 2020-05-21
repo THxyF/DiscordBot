@@ -6,6 +6,7 @@ exports.cMain = function(command, message){
   let json = JSON.parse(fs.readFileSync(datPath, 'utf8'));
   let filtered = json.channels.filter(ch => ch.name === channel);
   let send = '参加者:', len;
+  let field = [];
   
   if(filtered.length === 0){
     message.reply(channel + 'のデータは存在しません。');
@@ -15,7 +16,7 @@ exports.cMain = function(command, message){
     
     if(len > 0){
       for(let i = 0; i < len; i++){
-        send += '<@!' + filtered[0].members[i].id + '>,';
+        send += '\n<@!' + filtered[0].members[i].id + '>:' + filtered[0].members[i].fields;
       }
       
       message.channel.send(send);
@@ -31,5 +32,5 @@ exports.cMain = function(command, message){
 }
 
 exports.description = function(){
-  return '\n     ゲームの参加者を表示します。';
+  return '\n     ゲームの参加者の場を表示します。';
 }

@@ -13,23 +13,41 @@ const fs = require('fs');
 const client = new discord.Client();
 const default_command = 'help';
 const cron = require('node-cron');
+//const FormData = require('form-data');
+//const { URL, URLSearchParams } = require('url');
+const fetch = require('node-fetch');
+//const Headers = fetch.Headers;
 
 const ch_name = "一般";
 
-cron.schedule('* 0 * * *', () => {
-  client.channels.forEach(channel => {
-    if (channel.name === ch_name && channel.type === 'text') {
-      channel.send("0分だよ。");
-      return;
-    }
-    return;
-  });
-  console.log('0分だよ');
-})
+let cronJob = require('cron').CronJob;
 
-client.on('ready', message => {
-  client.user.setPresence({ game: { name: 'with discord.js' } });
-  console.log('bot is ready!');
+let cronTime = " 0 0 * * *";
+
+let job = new cronJob({
+  cronTime: cronTime
+  , onTick: function() {
+    client.channels.forEach(channel => {
+      if (channel.name === ch_name && channel.type === 'text') {
+        channel.send("日付けが変わりました!!今日も一日頑張るぞい!");
+        return;
+      }
+      return;
+    });
+  }
+  , onComplete: function() {
+    console.log('onComplete!')
+  }
+  , start: false
+  
+  , timeZone: "Asia/Tokyo"
+});
+
+job.start();
+
+client.on("ready", message => {
+  client.user.setPresence({ game: { name: "with discord.js" } });
+  console.log("bot is ready!");
 });
 
 client.on('message', message => {
@@ -49,9 +67,10 @@ client.on('message', message => {
   }
   
   if(/Tbug/.test(message.content)){
-    //message.channel.send('there\'s nothing to debug.');
-    //let emoji = client.emojis.find("name", "AC");
-    /*message.channel.send(':eyes:');
+    /*
+    message.channel.send('there\'s nothing to debug.');
+    let emoji = client.emojis.find("name", "AC");
+    message.channel.send(':eyes:');
     message.channel.send({
       embed:{
         image:{
@@ -63,15 +82,47 @@ client.on('message', message => {
       if(err) console.log(err);
       else console.log('write end');
     });
-    let text = fs.readFileSync("./gameDat/members.txt", 'utf-8')
-    fs.writeFileSync('./gameDat/dat.json', '', 'utf-8', (err, data) => {
+    let text = fs.readFileSync("./commandDat/timer.json", 'utf-8')
+    fs.writeFileSync('./commandDat/timer.json', '', 'utf-8', (err, data) => {
       if(err) console.log(err);
       else console.log('write end');
     });
     fs.unlinkSync('./gameDat/dat.json');
     let authorName = message.author.username;
-    message.channel.send(`${authorName},Hello!`);*/
-    message.channel.send('https://www.google.com/');
+    message.channel.send(`${authorName},Hello!`);
+    
+    const url = message.content.replace(/^Tbug\s/, '');
+    let titleA = [];
+    
+    fetch(url)
+	    .then(res => res.text(), errc => {
+        console.log(errc);
+        return '情報の取得に失敗しました。';
+      }).then(body => {
+        if(body.length > 1000){
+          body = body.slice(0, 1000) + '...';
+          console.log('それは表示するというにはあまりにも大きすぎた。\n');
+        }
+      
+        titleA = body.match(/<title>.*<\/title>/);
+        if(titleA !== null)titleA = titleA[0].match(/>.*</);
+        if(titleA !== null)titleA = titleA[0].match(/[^><]+/);
+        if(titleA !== null)message.channel.send('title:' + titleA);
+        else message.channel.send('titleは見つかりませんでした。');
+        
+        //message.channel.send(body);
+        console.log(body);
+        return;
+      }, errc => {console.log('?')});
+    */
+    
+    const datPath = './commandDat/timer.json';
+    const json = {"timers":[{"hour":"","min":"","sec":"","channel":"","user":"","text":""}]}
+    let rjson = JSON.parse(fs.readFileSync(datPath, 'utf8'));
+    
+    console.log(rjson);
+    
+    fs.writeFileSync(datPath, JSON.stringify(json));
     
     return 0;
   }
@@ -106,8 +157,8 @@ client.on('message', message => {
       message.reply('不明なコマンドです。\n(\'command:help\'を実行してみてください。)');
     }
   }
-  else if(/^ナブラゲームサーバー/.test(message.channel.name)){
-    if(message.content.startsWith('THFgame:')){
+  else if(message.content.startsWith('THFgame:')){
+    if(/^ナブラゲームサーバー/.test(message.channel.name)){
       let str = message.content.replace(/^THFgame:/, '');
       let type, path, access;
       
@@ -137,20 +188,23 @@ client.on('message', message => {
         message.reply('不明なコマンドです。\n(\'game:help\'を実行してみてください。)');
       }
     }
+    else{
+      message.reply('THFgameコマンドは専用チャンネルでしか使えないゾ。\nTHFcommand:makeNBRChを使うんだ。');
+    }
   }
   
   return 0;
 });
 
 client.on("messageReactionAdd", (messageReaction, user) => {
-    const rolename = messageReaction.message.guild.roles.find(r => r.name === "test");
+    //const rolename = messageReaction.message.guild.roles.find(r => r.name === "test");
   
     console.log('OK');
-    messageReaction.message.reply(messageReaction.emoji.name);
+    /*messageReaction.message.reply(messageReaction.emoji.name);
     if(messageReaction.emoji.name == 'eyes'){
         messageReaction.message.member.addRole(rolename);
         messageReaction.message.reply('Hi!');
-    }
+    }*/
 })
 
 if (process.env.DISCORD_BOT_TOKEN == undefined) {
