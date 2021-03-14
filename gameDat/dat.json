@@ -1,0 +1,29 @@
+{
+  "channels":[
+    {
+      "name":"default",
+      "members":[
+        {
+          "name":"",
+          "id":"",
+          "hands":[
+            "nothing"
+          ],
+          "fields":[
+            "1",
+            "x",
+            "x^2"
+          ]
+        }
+      ],
+      "turn":0,
+      "whoseTurn":0
+    },
+    {
+      "name":"ナブラゲームサーバー0",
+      "members":[
+        
+      ]
+    }
+  ]
+}
